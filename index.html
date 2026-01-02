@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Invitation Mariage Arnold & Alphine</title>
+  <style>
+    body { 
+      font-family: 'Playfair Display', serif; 
+      background-color: #fff; 
+      color: #111; 
+      text-align: center; 
+      padding: 50px; 
+    }
+    .nom { font-size: 36px; font-weight: bold; margin-top: 30px; }
+    .table { font-size: 28px; color: #b8860b; margin-top: 10px; }
+    .bienvenue { font-size: 22px; margin-top: 30px; }
+    .check { font-size: 50px; color: green; }
+  </style>
+</head>
+<body>
+  <div class="check">✔️</div>
+  <div class="nom" id="nom">Chargement...</div>
+  <div class="table" id="table">Table : …</div>
+  <div class="bienvenue">Bienvenue au mariage Arnold & Alphine</div>
+
+  <script>
+    // Lecture de l'ID depuis le QR
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
+
+    // Base des invités (exemple 3 invités)
+    const guests = {
+      "001": {nom: "Jonathan Kanku", table: "Manguier"},
+      "002": {nom: "Marie Kalala", table: "Palmier"},
+      "003": {nom: "Paul Mabaya", table: "Bougainville"}
+    };
+
+    if (guests[id]) {
+      document.getElementById('nom').innerText = guests[id].nom;
+      document.getElementById('table').innerText = "Table : " + guests[id].table;
+    } else {
+      document.getElementById('nom').innerText = "Invité inconnu";
+      document.getElementById('table').innerText = "";
+    }
+  </script>
+</body>
+</html>
