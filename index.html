@@ -1,234 +1,277 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<title>Invitation Mariage 2026</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Invitation Mariage</title>
+
 <style>
   body {
-    font-family: 'Georgia', serif;
-    background: #f0f4f8;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
     margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
   }
+
   .card {
-    background: #ffffff;
-    padding: 50px 40px;
-    border-radius: 20px;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
     text-align: center;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
-    width: 400px;
-    border: 3px solid #b8860b;
-    transition: transform 0.3s;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
   }
-  .card:hover {
-    transform: translateY(-5px);
-  }
+
   h1 {
-    color: #1f3a93;
-    font-size: 32px;
-    margin-bottom: 15px;
+    margin-top: 0;
+    color: #198754;
   }
-  p {
-    font-size: 18px;
-    color: #555;
-    margin: 5px 0 20px 0;
-  }
-  .table {
-    font-size: 24px;
+
+  .name {
+    font-size: 22px;
     font-weight: bold;
-    color: #b8860b;
-    margin-top: 15px;
+    margin: 15px 0;
   }
-  .footer {
-    font-size: 14px;
-    color: #888;
-    margin-top: 30px;
+
+  .table {
+    font-size: 18px;
+    margin-top: 10px;
   }
+
+  .invalid {
+    color: #dc3545;
+    font-weight: bold;
+  }
+
+  /* BADGE */
+  .badge {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    font-weight: bold;
+    color: white;
+    z-index: 9999;
+  }
+
+  .badge.ok { background: #1db954; }
+  .badge.no { background: #d32f2f; }
+  .hidden { display: none; }
 </style>
 </head>
+
 <body>
 
 <div class="card">
-  <h1 id="guestName">Chargement...</h1>
-  <p>Invité officiel</p>
-  <div class="table" id="guestTable"></div>
-  <div class="footer">Mariage Arnold & Alphine - 18 Janvier 2026</div>
+  <h1>Bienvenue</h1>
+  <div class="name" id="inviteNom"></div>
+  <div class="table" id="inviteTable"></div>
+  <div id="error" class="invalid"></div>
 </div>
 
+<div id="badge" class="badge hidden"></div>
+
+<audio id="sound-ok" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="sound-no" src="https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg"></audio>
+
 <script>
-const guests = [
-{id:"1", name:"COUPLE SAMY", table:"Manguier"},
-{id:"2", name:"COUPLE JACQUES", table:""},
-{id:"3", name:"COUPLE FISTON", table:""},
-{id:"4", name:"COUPLE SENGA", table:""},
-{id:"5", name:"COUPLE JOSUE", table:""},
-{id:"6", name:"COUPLE ANDRE", table:""},
-{id:"7", name:"COUPLE WILLY", table:""},
-{id:"8", name:"COUPLE ALBERT WO", table:""},
-{id:"9", name:"TANTINE ARLETTE", table:""},
-{id:"10", name:"THERESE KOMBE", table:""},
-{id:"11", name:"KOMBE SHOTSHA", table:""},
-{id:"12", name:"BRIGITE KOMBE", table:""},
-{id:"13", name:"PASI OSODI", table:""},
-{id:"14", name:"MA NICLETTE", table:""},
-{id:"15", name:"BIBICHE FABRICE", table:""},
-{id:"16", name:"MERVEDIE FABRICE", table:""},
-{id:"17", name:"ARMAND KAMANGO", table:""},
-{id:"18", name:"MAMAN CHRISTINE", table:""},
-{id:"19", name:"MAMAN GENEROSE", table:""},
-{id:"20", name:"MAMAN NANA", table:""},
-{id:"21", name:"CLARISSE OKOSSA", table:""},
-{id:"22", name:"LAUREINE LUBAMBA", table:""},
-{id:"23", name:"LES TOKENGES", table:""},
-{id:"24", name:"COUPLE FISTON MABAYA", table:""},
-{id:"25", name:"LEATITIA MABAYA", table:""},
-{id:"26", name:"DORCAS MABAYA", table:""},
-{id:"27", name:"JACQUES MABAYA", table:""},
-{id:"28", name:"BLESSING MABAYA", table:""},
-{id:"29", name:"WINNER MABAYA", table:""},
-{id:"30", name:"COUPLE MBO MABAYA", table:""},
-{id:"31", name:"MICHAEL MABAYA", table:""},
-{id:"32", name:"LYDIA MABAYA", table:""},
-{id:"33", name:"NEHEMIE MABAYA", table:""},
-{id:"34", name:"LAUREDY MABAYA", table:""},
-{id:"35", name:"EMMANUEL MABAYA", table:""},
-{id:"36", name:"GLODDY MABAYA", table:""},
-{id:"37", name:"EMMANUELLA MABAYA", table:""},
-{id:"38", name:"COUPLE JUNIOR MABAYA", table:""},
-{id:"39", name:"KAREL MABAYA", table:""},
-{id:"40", name:"COUPLE LIEVIEN MABAYA", table:""},
-{id:"41", name:"FAUSTIN MABAYA", table:""},
-{id:"42", name:"COUPLE JACQUIS MABAYA", table:""},
-{id:"43", name:"COUPLE BOSCO MABAYA", table:""},
-{id:"44", name:"SAMUELLA MABAYA", table:""},
-{id:"45", name:"COUPLE JEAN MABAYA", table:""},
-{id:"46", name:"COUPLE DIDIER MAPWAMA", table:""},
-{id:"47", name:"MARTHE & APHO", table:""},
-{id:"48", name:"COUPLE RUPHIN", table:""},
-{id:"49", name:"NICOLE", table:""},
-{id:"50", name:"MAGUY", table:""},
-{id:"51", name:"COUPLE LUCIEN", table:""},
-{id:"52", name:"COUPLE KIENDA", table:""},
-{id:"53", name:"COUPLE PHILIPE", table:""},
-{id:"54", name:"COUPLE MBAYO", table:""},
-{id:"55", name:"DR ADMIS", table:""},
-{id:"56", name:"MEGE", table:""},
-{id:"57", name:"BRUNELLE", table:""},
-{id:"58", name:"COUPLE MBAYO", table:""},
-{id:"59", name:"CARINE", table:""},
-{id:"60", name:"COUPLE CEPHAS", table:""},
-{id:"61", name:"Sr SARAH", table:""},
-{id:"62", name:"Sr EXENIA", table:""},
-{id:"63", name:"COUPLE ISAAC KADIMA", table:""},
-{id:"64", name:"COUPLE REMY VALA", table:""},
-{id:"65", name:"COUPLE KADI MWENGULA", table:""},
-{id:"66", name:"COUPLE DELU", table:""},
-{id:"67", name:"COUPLE BERNARD MBANGU", table:""},
-{id:"68", name:"COUPLE SYLVAIN", table:""},
-{id:"69", name:"COUPLE TONNY", table:""},
-{id:"70", name:"COUPLE CHRISPIN", table:""},
-{id:"71", name:"COUPLE TOUSAIN NZINGA", table:""},
-{id:"72", name:"MICHE BETU", table:""},
-{id:"73", name:"MARCELINE BETU", table:""},
-{id:"74", name:"RUTH MUKUNA", table:""},
-{id:"75", name:"GRACE KUDINGA", table:""},
-{id:"76", name:"COUPLE JEREMI NGINDU", table:""},
-{id:"77", name:"COUPLE BONY NGINDU", table:""},
-{id:"78", name:"COUPLE SERGE LUFUSA", table:""},
-{id:"79", name:"COUPLE ABEL BETU", table:""},
-{id:"80", name:"COUPLE JEANNOT", table:""},
-{id:"81", name:"COUPLE MBUTA", table:""},
-{id:"82", name:"ISRAEL NGINDU", table:""},
-{id:"83", name:"FIDELINE KUDIVA", table:""},
-{id:"84", name:"COUPLE ISAAC KANYINDA", table:""},
-{id:"85", name:"COUPLE LUTETE CORNEILLE", table:""},
-{id:"86", name:"COUPLE MULUNDU ERIC", table:""},
-{id:"87", name:"COUPLE ACHILE MBUMBA", table:""},
-{id:"88", name:"COUPLE JOHN BUKASA", table:""},
-{id:"89", name:"COUPLE DIDO", table:""},
-{id:"90", name:"COUPE DIEU MERCI BETU", table:""},
-{id:"91", name:"COUPLE MICHEL SALAMBU", table:""},
-{id:"92", name:"GEDEON TSHIMANGA", table:""},
-{id:"93", name:"COUPLE DESTIN MAFUENE", table:""},
-{id:"94", name:"HERMAN", table:""},
-{id:"95", name:"COUPLE HENOCK BETU", table:""},
-{id:"96", name:"MANACE", table:""},
-{id:"97", name:"ANTHO BWANZA", table:""},
-{id:"98", name:"BELANGE M", table:""},
-{id:"99", name:"LAURETTE KAPISI", table:""},
-{id:"100", name:"LISETTE NTUMBA", table:""},
-{id:"101", name:"MARIE ALENGELE", table:""},
-{id:"102", name:"ELIE BWANZA", table:""},
-{id:"103", name:"KADI MUFU", table:""},
-{id:"104", name:"BENJAMIN NYEMBWE", table:""},
-{id:"105", name:"JUSPSY NDUDI", table:""},
-{id:"106", name:"BLANDINE TSHIBOLA", table:""},
-{id:"107", name:"Mme LILA KYENGE", table:""},
-{id:"108", name:"Mme LONA MONGA", table:""},
-{id:"109", name:"Mme Rachel KABENE", table:""},
-{id:"110", name:"Mme Esther KATSHAYI", table:""},
-{id:"111", name:"Mme DEBORAH OWANDJI", table:""},
-{id:"112", name:"M. FABRICE SONGOLO", table:""},
-{id:"113", name:"M MANISH", table:""},
-{id:"114", name:"Mme PERPETUE", table:""},
-{id:"115", name:"COUPLE STEVE MFUMU", table:""},
-{id:"116", name:"Mme LYSE MUALUKIE", table:""},
-{id:"117", name:"COUPLE RODRIGUE BASEKUNANI", table:""},
-{id:"118", name:"BEN LUKMBO", table:""},
-{id:"119", name:"COUPLE ZOLA MAKIESE", table:""},
-{id:"120", name:"COUPLE HERTONE MASUKULA", table:""},
-{id:"121", name:"COUPLE ANIFA KAYOKA", table:""},
-{id:"122", name:"COUPLE KEVINE BATANTU", table:""},
-{id:"123", name:"BRUNELLE MONDO", table:""},
-{id:"124", name:"HERVE LUKOJI", table:""},
-{id:"125", name:"COUPLE PAULY MABANGU", table:""},
-{id:"126", name:"JOHN TSHISUAKA", table:""},
-{id:"127", name:"COUPLE GOLFRED", table:""},
-{id:"128", name:"Mme THETHE", table:""},
-{id:"129", name:"Mme THERESE", table:""},
-{id:"130", name:"COUPLE EFANA EKUTSHU", table:""},
-{id:"131", name:"BILAFU LUSHIMA", table:""},
-{id:"132", name:"YEKINDA CHRISTIAN", table:""},
-{id:"133", name:"MAKUMBILA JOSIANE", table:""},
-{id:"134", name:"SERGE MWUAMBA", table:""},
-{id:"135", name:"COUPLE MPIA MONSENGO", table:""},
-{id:"136", name:"COUPLE TRESOR BULANGWANGA", table:""},
-{id:"137", name:"ALAIN LUBOYA", table:""},
-{id:"138", name:"COUPLE JOEL KABWE", table:""},
-{id:"139", name:"PATRICK KABUYA", table:""},
-{id:"140", name:"MBALA MATONDO", table:""},
-{id:"141", name:"NGOMA PRECIEUSE", table:""},
-{id:"142", name:"DANNIELA KAYINDO", table:""},
-{id:"143", name:"SIPAK TSHIMPAMBA", table:""},
-{id:"144", name:"DAVID ASHIMBA", table:""},
-{id:"145", name:"LOYDE MOKE", table:""},
-{id:"146", name:"COUPLE JEAN BRUCE WEZA", table:""},
-{id:"147", name:"COUPLE SERGE MPARAMA", table:""},
-{id:"148", name:"RODRIGUE KAZWALA", table:""},
-{id:"149", name:"HERVE ZIMBAZIMBA", table:""},
-{id:"150", name:"COUPLE MEUSE", table:""},
-{id:"151", name:"COUPLE KANINDA", table:""},
-{id:"152", name:"COUPLE MARDOCHE", table:""},
-{id:"153", name:"COUPLE Dr OLIVIE", table:""},
-{id:"154", name:"Fr KWETE", table:""},
-{id:"155", name:"SIMEON SANTINI", table:""},
-{id:"156", name:"CESAR MEMPU", table:""}
-];
 
-const urlParams = new URLSearchParams(window.location.search);
-const guestId = urlParams.get('id');
+  const invites = {
+  1:{nom:"COUPLE SAMY",table:"Table à définir"},
+  2:{nom:"COUPLE JACQUES",table:"Table à définir"},
+  3:{nom:"COUPLE FISTON",table:"Table à définir"},
+  4:{nom:"COUPLE SENGA",table:"Table à définir"},
+  5:{nom:"COUPLE JOSUE",table:"Table à définir"},
+  6:{nom:"COUPLE ANDRE",table:"Table à définir"},
+  7:{nom:"COUPLE WILLY",table:"Table à définir"},
+  8:{nom:"COUPLE ALBERT WO",table:"Table à définir"},
+  9:{nom:"TANTINE ARLETTE",table:"Table à définir"},
+  10:{nom:"THERESE KOMBE",table:"Table à définir"},
+  11:{nom:"KOMBE SHOTSHA",table:"Table à définir"},
+  12:{nom:"BRIGITE KOMBE",table:"Table à définir"},
+  13:{nom:"PASI OSODI",table:"Table à définir"},
+  14:{nom:"MA NICLETTE",table:"Table à définir"},
+  15:{nom:"BIBICHE FABRICE",table:"Table à définir"},
+  16:{nom:"MERVEDIE FABRICE",table:"Table à définir"},
+  17:{nom:"ARMAND KAMANGO",table:"Table à définir"},
+  18:{nom:"MAMAN CHRISTINE",table:"Table à définir"},
+  19:{nom:"MAMAN GENEROSE",table:"Table à définir"},
+  20:{nom:"MAMAN NANA",table:"Table à définir"},
+  21:{nom:"CLARISSE OKOSSA",table:"Table à définir"},
+  22:{nom:"LAUREINE LUBAMBA",table:"Table à définir"},
+  23:{nom:"LES TOKENGES",table:"Table à définir"},
+  24:{nom:"COUPLE FISTON MABAYA",table:"Table à définir"},
+  25:{nom:"LEATITIA MABAYA",table:"Table à définir"},
+  26:{nom:"DORCAS MABAYA",table:"Table à définir"},
+  27:{nom:"JACQUES MABAYA",table:"Table à définir"},
+  28:{nom:"BLESSING MABAYA",table:"Table à définir"},
+  29:{nom:"WINNER MABAYA",table:"Table à définir"},
+  30:{nom:"COUPLE MBO MABAYA",table:"Table à définir"},
+  31:{nom:"MICHAEL MABAYA",table:"Table à définir"},
+  32:{nom:"LYDIA MABAYA",table:"Table à définir"},
+  33:{nom:"NEHEMIE MABAYA",table:"Table à définir"},
+  34:{nom:"LAUREDY MABAYA",table:"Table à définir"},
+  35:{nom:"EMMANUEL MABAYA",table:"Table à définir"},
+  36:{nom:"GLODDY MABAYA",table:"Table à définir"},
+  37:{nom:"EMMANUELLA MABAYA",table:"Table à définir"},
+  38:{nom:"COUPLE JUNIOR MABAYA",table:"Table à définir"},
+  39:{nom:"KAREL MABAYA",table:"Table à définir"},
+  40:{nom:"COUPLE LIEVIEN MABAYA",table:"Table à définir"},
+  41:{nom:"FAUSTIN MABAYA",table:"Table à définir"},
+  42:{nom:"COUPLE JACQUIS MABAYA",table:"Table à définir"},
+  43:{nom:"COUPLE BOSCO MABAYA",table:"Table à définir"},
+  44:{nom:"SAMUELLA MABAYA",table:"Table à définir"},
+  45:{nom:"COUPLE JEAN MABAYA",table:"Table à définir"},
+  46:{nom:"COUPLE DIDIER MAPWAMA",table:"Table à définir"},
+  47:{nom:"MARTHE & APHO",table:"Table à définir"},
+  48:{nom:"COUPLE RUPHIN",table:"Table à définir"},
+  49:{nom:"NICOLE",table:"Table à définir"},
+  50:{nom:"MAGUY",table:"Table à définir"},
+  51:{nom:"COUPLE LUCIEN",table:"Table à définir"},
+  52:{nom:"COUPLE KIENDA",table:"Table à définir"},
+  53:{nom:"COUPLE PHILIPE",table:"Table à définir"},
+  54:{nom:"COUPLE MBAYO",table:"Table à définir"},
+  55:{nom:"DR ADMIS",table:"Table à définir"},
+  56:{nom:"MEGE",table:"Table à définir"},
+  57:{nom:"BRUNELLE",table:"Table à définir"},
+  58:{nom:"COUPLE MBAYO",table:"Table à définir"},
+  59:{nom:"CARINE",table:"Table à définir"},
+  60:{nom:"COUPLE CEPHAS",table:"Table à définir"},
+  61:{nom:"Sr SARAH",table:"Table à définir"},
+  62:{nom:"Sr EXENIA",table:"Table à définir"},
+  63:{nom:"COUPLE ISAAC KADIMA",table:"Table à définir"},
+  64:{nom:"COUPLE REMY VALA",table:"Table à définir"},
+  65:{nom:"COUPLE KADI MWENGULA",table:"Table à définir"},
+  66:{nom:"COUPLE DELU",table:"Table à définir"},
+  67:{nom:"COUPLE BERNARD MBANGU",table:"Table à définir"},
+  68:{nom:"COUPLE SYLVAIN",table:"Table à définir"},
+  69:{nom:"COUPLE TONNY",table:"Table à définir"},
+  70:{nom:"COUPLE CHRISPIN",table:"Table à définir"},
+  71:{nom:"COUPLE TOUSAIN NZINGA",table:"Table à définir"},
+  72:{nom:"MICHE BETU",table:"Table à définir"},
+  73:{nom:"MARCELINE BETU",table:"Table à définir"},
+  74:{nom:"RUTH MUKUNA",table:"Table à définir"},
+  75:{nom:"GRACE KUDINGA",table:"Table à définir"},
+  76:{nom:"COUPLE JEREMI NGINDU",table:"Table à définir"},
+  77:{nom:"COUPLE BONY NGINDU",table:"Table à définir"},
+  78:{nom:"COUPLE SERGE LUFUSA",table:"Table à définir"},
+  79:{nom:"COUPLE ABEL BETU",table:"Table à définir"},
+  80:{nom:"COUPLE JEANNOT",table:"Table à définir"},
+  81:{nom:"COUPLE MBUTA",table:"Table à définir"},
+  82:{nom:"ISRAEL NGINDU",table:"Table à définir"},
+  83:{nom:"FIDELINE KUDIVA",table:"Table à définir"},
+  84:{nom:"COUPLE ISAAC KANYINDA",table:"Table à définir"},
+  85:{nom:"COUPLE LUTETE CORNEILLE",table:"Table à définir"},
+  86:{nom:"COUPLE MULUNDU ERIC",table:"Table à définir"},
+  87:{nom:"COUPLE ACHILE MBUMBA",table:"Table à définir"},
+  88:{nom:"COUPLE JOHN BUKASA",table:"Table à définir"},
+  89:{nom:"COUPLE DIDO",table:"Table à définir"},
+  90:{nom:"COUPE DIEU MERCI BETU",table:"Table à définir"},
+  91:{nom:"COUPLE MICHEL SALAMBU",table:"Table à définir"},
+  92:{nom:"GEDEON TSHIMANGA",table:"Table à définir"},
+  93:{nom:"COUPLE DESTIN MAFUENE",table:"Table à définir"},
+  94:{nom:"HERMAN",table:"Table à définir"},
+  95:{nom:"COUPLE HENOCK BETU",table:"Table à définir"},
+  96:{nom:"MANACE",table:"Table à définir"},
+  97:{nom:"ANTHO BWANZA",table:"Table à définir"},
+  98:{nom:"BELANGE M",table:"Table à définir"},
+  99:{nom:"LAURETTE KAPISI",table:"Table à définir"},
+  100:{nom:"LISETTE NTUMBA",table:"Table à définir"},
+  101:{nom:"MARIE ALENGELE",table:"Table à définir"},
+  102:{nom:"ELIE BWANZA",table:"Table à définir"},
+  103:{nom:"KADI MUFU",table:"Table à définir"},
+  104:{nom:"BENJAMIN NYEMBWE",table:"Table à définir"},
+  105:{nom:"JUSPSY NDUDI",table:"Table à définir"},
+  106:{nom:"BLANDINE TSHIBOLA",table:"Table à définir"},
+  107:{nom:"Mme LILA KYENGE",table:"Table à définir"},
+  108:{nom:"Mme LONA MONGA",table:"Table à définir"},
+  109:{nom:"Mme Rachel KABENE",table:"Table à définir"},
+  110:{nom:"Mme Esther KATSHAYI",table:"Table à définir"},
+  111:{nom:"Mme DEBORAH OWANDJI",table:"Table à définir"},
+  112:{nom:"M. FABRICE SONGOLO",table:"Table à définir"},
+  113:{nom:"M MANISH",table:"Table à définir"},
+  114:{nom:"Mme PERPETUE",table:"Table à définir"},
+  115:{nom:"COUPLE STEVE MFUMU",table:"Table à définir"},
+  116:{nom:"Mme LYSE MUALUKIE",table:"Table à définir"},
+  117:{nom:"COUPLE RODRIGUE BASEKUNANI",table:"Table à définir"},
+  118:{nom:"BEN LUKMBO",table:"Table à définir"},
+  119:{nom:"COUPLE ZOLA MAKIESE",table:"Table à définir"},
+  120:{nom:"COUPLE HERTONE MASUKULA",table:"Table à définir"},
+  121:{nom:"COUPLE ANIFA KAYOKA",table:"Table à définir"},
+  122:{nom:"COUPLE KEVINE BATANTU",table:"Table à définir"},
+  123:{nom:"BRUNELLE MONDO",table:"Table à définir"},
+  124:{nom:"HERVE LUKOJI",table:"Table à définir"},
+  125:{nom:"COUPLE PAULY MABANGU",table:"Table à définir"},
+  126:{nom:"JOHN TSHISUAKA",table:"Table à définir"},
+  127:{nom:"COUPLE GOLFRED",table:"Table à définir"},
+  128:{nom:"Mme THETHE",table:"Table à définir"},
+  129:{nom:"Mme THERESE",table:"Table à définir"},
+  130:{nom:"COUPLE EFANA EKUTSHU",table:"Table à définir"},
+  131:{nom:"BILAFU LUSHIMA",table:"Table à définir"},
+  132:{nom:"YEKINDA CHRISTIAN",table:"Table à définir"},
+  133:{nom:"MAKUMBILA JOSIANE",table:"Table à définir"},
+  134:{nom:"SERGE MWUAMBA",table:"Table à définir"},
+  135:{nom:"COUPLE MPIA MONSENGO",table:"Table à définir"},
+  136:{nom:"COUPLE TRESOR BULANGWANGA",table:"Table à définir"},
+  137:{nom:"ALAIN LUBOYA",table:"Table à définir"},
+  138:{nom:"COUPLE JOEL KABWE",table:"Table à définir"},
+  139:{nom:"PATRICK KABUYA",table:"Table à définir"},
+  140:{nom:"MBALA MATONDO",table:"Table à définir"},
+  141:{nom:"NGOMA PRECIEUSE",table:"Table à définir"},
+  142:{nom:"DANNIELA KAYINDO",table:"Table à définir"},
+  143:{nom:"SIPAK TSHIMPAMBA",table:"Table à définir"},
+  144:{nom:"DAVID ASHIMBA",table:"Table à définir"},
+  145:{nom:"LOYDE MOKE",table:"Table à définir"},
+  146:{nom:"COUPLE JEAN BRUCE WEZA",table:"Table à définir"},
+  147:{nom:"COUPLE SERGE MPARAMA",table:"Table à définir"},
+  148:{nom:"RODRIGUE KAZWALA",table:"Table à définir"},
+  149:{nom:"HERVE ZIMBAZIMBA",table:"Table à définir"},
+  150:{nom:"COUPLE MEUSE",table:"Table à définir"},
+  151:{nom:"COUPLE KANINDA",table:"Table à définir"},
+  152:{nom:"COUPLE MARDOCHE",table:"Table à définir"},
+  153:{nom:"COUPLE Dr OLIVIE",table:"Table à définir"},
+  154:{nom:"Fr KWETE",table:"Table à définir"},
+  155:{nom:"SIMEON SANTINI",table:"Table à définir"},
+  156:{nom:"CESAR MEMPU",table:"Table à définir"}
+};
 
-const guest = guests.find(g => g.id === guestId);
 
-if (guest) {
-  document.getElementById('guestName').innerText = guest.name;
-  document.getElementById('guestTable').innerText = guest.table || "Table à définir";
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id");
+
+const nomEl = document.getElementById("inviteNom");
+const tableEl = document.getElementById("inviteTable");
+const errorEl = document.getElementById("error");
+const badge = document.getElementById("badge");
+
+function showBadge(type, text) {
+  badge.textContent = text;
+  badge.className = "badge " + type;
+  setTimeout(() => badge.classList.add("hidden"), 2000);
+}
+
+function playOk() {
+  document.getElementById("sound-ok").play();
+}
+function playNo() {
+  document.getElementById("sound-no").play();
+}
+
+if (id && invites[id]) {
+  nomEl.textContent = invites[id].nom;
+  tableEl.textContent = "Table : " + invites[id].table;
+  playOk();
+  showBadge("ok", "✔ ACCÈS AUTORISÉ");
 } else {
-  document.getElementById('guestName').innerText = "Invité non trouvé";
-  document.getElementById('guestTable').innerText = "";
+  errorEl.textContent = "QR CODE INVALIDE";
+  playNo();
+  showBadge("no", "✖ REFUSÉ");
 }
 </script>
 
